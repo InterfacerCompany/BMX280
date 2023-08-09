@@ -39,14 +39,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#ifndef BME280_EN
-# define BME280_EN 0    // BME280 sensor support is disabled
-#endif // BME280_EN
-
-#ifndef BMX_ALT_EN
-# define BMX_ALT_EN 0   // altitude support is disabled
-#endif // BMX_ALT_EN
-
 // I2C address
 #define BMX280_I2C_ADDR             0x76    //!< I2C address
 #define BMX280_I2C_ADDR_ALT         0x77    //!< I2C alternative address
@@ -154,15 +146,10 @@ public:
     // BMP280/BME280
     float readTemperature();
     float readPressure();
-
-#if BMX_ALT_EN == 1
     float readAltitude(float seaLevel);
-#endif // BMX_ALT_EN == 1
 
     // BME280 only
-#if BME280_EN == 1
     float readHumidity();
-#endif // BME280_EN == 1
 
     // Configuration
     void setSampling(BMX280_Mode_e mode = BMX280_MODE_NORMAL,
@@ -198,15 +185,12 @@ private:
     int16_t _dig_P7;
     int16_t _dig_P8;
     int16_t _dig_P9;
-
-#if BME280_EN == 1
     uint8_t _dig_H1;
     int16_t _dig_H2;
     uint8_t _dig_H3;
     int16_t _dig_H4;
     int16_t _dig_H5;
     int8_t _dig_H6;
-#endif // BME280_EN == 1
 
     // Read coefficient registers
     void readCoefficients(void);

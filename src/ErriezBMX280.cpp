@@ -60,18 +60,14 @@ bool ErriezBMX280::begin(uint8_t i2cAddr)
     // Read chip ID
     _chipID = read8(BME280_REG_CHIPID);
 
+    Serial.print("chip ID: ");
+    Serial.println(_chipID);
+
     // Check sensor ID BMP280 or BME280
-#if BME280_EN == 1
     if ((_chipID != CHIP_ID_BMP280) && ((_chipID != CHIP_ID_BME280))) {
         // BMP280 / BME280 not found
         return false;
     }
-#else
-    if (_chipID != CHIP_ID_BMP280) {
-        // BMP280
-        return false;
-    }
-#endif //
 
     // Generate soft-reset
     write8(BME280_REG_RESET, RESET_KEY);
@@ -186,7 +182,6 @@ float ErriezBMX280::readPressure()
  * \return
  *      Altitude (float)
  */
-#if BMX_ALT_EN == 1
 float ErriezBMX280::readAltitude(float seaLevel)
 {
     float atmospheric = readPressure() / 100.0F;
@@ -194,14 +189,12 @@ float ErriezBMX280::readAltitude(float seaLevel)
     // In Si units for Pascal
     return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
 }
-#endif // BMX_ALT_EN == 1
 
 /*!
  * \brief Read humidity (BME280 only)
  * \return
  *      Humidity (float)
  */
-#if BME280_EN == 1
 float ErriezBMX280::readHumidity()
 {
     int32_t v_x1_u32r;
@@ -239,7 +232,6 @@ float ErriezBMX280::readHumidity()
 
     return humidity / 1024.0;
 }
-#endif // BME280_EN == 1
 
 /*!
  * \brief Read coefficient registers at startup
@@ -259,8 +251,6 @@ void ErriezBMX280::readCoefficients(void)
     _dig_P7 = readS16_LE(BMX280_REG_DIG_P7);
     _dig_P8 = readS16_LE(BMX280_REG_DIG_P8);
     _dig_P9 = readS16_LE(BMX280_REG_DIG_P9);
-
-#if BME280_EN == 1
     if (_chipID == CHIP_ID_BME280) {
         _dig_H1 = read8(BME280_REG_DIG_H1);
         _dig_H2 = readS16_LE(BME280_REG_DIG_H2);
@@ -269,7 +259,6 @@ void ErriezBMX280::readCoefficients(void)
         _dig_H5 = ((int8_t) read8(BME280_REG_DIG_H5 + 1) << 4) | (read8(BME280_REG_DIG_H5) >> 4);
         _dig_H6 = (int8_t) read8(BME280_REG_DIG_H6);
     }
-#endif // BME280_EN == 1
 }
 
 /*!
@@ -296,13 +285,10 @@ void ErriezBMX280::setSampling(BMX280_Mode_e mode,
 {
     // Set in sleep mode to provide write access to the “config” register
     write8(BMX280_REG_CTRL_MEAS, BMX280_MODE_SLEEP);
-
-#if BME280_EN == 1
     if (_chipID == CHIP_ID_BME280) {
         // See datasheet 5.4.3 Register 0xF2 “ctrl_hum”
         write8(BME280_REG_CTRL_HUM, humSampling);
     }
-#endif // BME280_EN == 1
 
     // See datasheet 5.4.6 Register 0xF5 “config”
     write8(BMX280_REG_CONFIG, (standbyDuration << 5) | (filter << 2));
