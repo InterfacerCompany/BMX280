@@ -60,9 +60,6 @@ bool ErriezBMX280::begin(uint8_t i2cAddr)
     // Read chip ID
     _chipID = read8(BME280_REG_CHIPID);
 
-    Serial.print("chip ID: ");
-    Serial.println(_chipID);
-
     // Check sensor ID BMP280 or BME280
     if ((_chipID != CHIP_ID_BMP280) && ((_chipID != CHIP_ID_BME280))) {
         // BMP280 / BME280 not found
