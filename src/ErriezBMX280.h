@@ -138,9 +138,7 @@ public:
     ErriezBMX280();
 
     // Initialization
-    bool begin(uint8_t i2cAddr);
-    bool checkPresence();
-
+    bool begin(TwoWire* wire_p = &Wire, uint8_t i2cAddr = BMX280_I2C_ADDR);
     uint8_t getChipID();
 
     // BMP280/BME280
@@ -168,6 +166,7 @@ public:
     void write8(uint8_t reg, uint8_t value);
 
 private:
+    TwoWire* _wire_p;   /**< Wire object pointer*/
     uint8_t _i2cAddr;   //!< I2C address
     uint8_t _chipID;    //!< Chip iD
     int32_t _t_fine;    //!< Temperature variable

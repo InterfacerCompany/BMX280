@@ -75,8 +75,8 @@ Examples | Erriez BMP280/BME280 sensor:
 // Adjust sea level for altitude calculation
 #define SEA_LEVEL_PRESSURE_HPA      1026.25
 
-// Create BMX280 object I2C address 0x76 or 0x77
-ErriezBMX280 bmx280 = ErriezBMX280(0x76);
+// Create BMX280 object
+ErriezBMX280 bmx280 = ErriezBMX280();
 
 
 void setup()
@@ -93,8 +93,8 @@ void setup()
     Wire.begin();
     Wire.setClock(400000);
 
-    // Initialize sensor
-    while (!bmx280.begin()) {
+    // Initialize sensor, I2C address 0x76 or 0x77
+    while (!bmx280.begin(&Wire, 0x76)) {
         Serial.println(F("Error: Could not detect sensor"));
         delay(3000);
     }
